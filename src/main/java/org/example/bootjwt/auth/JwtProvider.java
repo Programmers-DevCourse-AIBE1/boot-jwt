@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
 
-    @Value("${jwt.secret")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     @Value("${jwt.expiration-ms}")
