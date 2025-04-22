@@ -1,13 +1,17 @@
 package org.example.bootjwt.controller;
 
+import lombok.extern.java.Log;
 import org.example.bootjwt.auth.JwtTokenProvider;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/api/test")
+@RestController
+@RequestMapping("/api/test")
+@Log
 public class TestController {
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -15,10 +19,12 @@ public class TestController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @GetMapping("/")
-    public String index(Model model, Authentication auth) {
-        String token = jwtTokenProvider.createToken(auth);
-        model.addAttribute("jwt", token);
-        return "index";
+    @PostMapping("/")
+    public ResponseEntity<Void> token(@RequestParam String token) {
+        log.info(token);
+        if (jwtTokenProvider.validateToken(token)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
