@@ -1,1 +1,5 @@
-spring.application.name=boot-jwt
+spring:
+  application:
+    name: boot-jwt
+  profiles:
+    active: dev
