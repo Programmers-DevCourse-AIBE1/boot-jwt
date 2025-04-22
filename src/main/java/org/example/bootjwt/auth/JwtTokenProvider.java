@@ -1,5 +1,6 @@
 package org.example.bootjwt.auth;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -34,5 +35,28 @@ public class JwtTokenProvider {
                 .expiration(expiryDate)
                 .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
+    }
+
+    public String getUsername(String token) {
+        SecretKey signingKey = Keys.hmacShaKeyFor(secretKey.getBytes());
+        return Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            SecretKey signingKey = Keys.hmacShaKeyFor(secretKey.getBytes());
+            Jwts.parser().verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            // RuntimeException 이라 Throws 대상 아님.
+            return false;
+        }
     }
 }
